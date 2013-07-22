@@ -6,6 +6,7 @@ package net.orfjackal.retrolambda.test;
 
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -77,6 +78,17 @@ public class LambdaTest {
         Callable<Integer> lambda = () -> (int) ((bool ? 1 : 0) + b + s + i + l + f + d + c);
 
         assertThat(lambda.call(), is(36));
+    }
+
+    private interface SerializableCallable<V> extends Callable<V>, Serializable {
+    }
+
+    @Test
+    public void serializable_lambda() throws Exception {
+        String foo = "foo"; // this value must be serialized together with the lambda
+        SerializableCallable<String> lambda = () -> foo;
+
+        assertThat(lambda.call(), is("foo"));
     }
 
     @Test
